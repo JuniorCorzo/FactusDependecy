@@ -6,6 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.github.juniorcorzo.dto.ResponseDTO;
 import io.github.juniorcorzo.dto.billing.request.BillFiltersRequestDTO;
 import io.github.juniorcorzo.dto.billing.request.BillingRequestDTO;
+import io.github.juniorcorzo.dto.billing.response.BillEventsResponseDTO;
 import io.github.juniorcorzo.dto.billing.response.BillFileDTO;
 import io.github.juniorcorzo.dto.billing.response.BillingResponseDTO;
 import io.github.juniorcorzo.dto.billing.response.BillsFilteredResponseDTO;
@@ -17,7 +18,6 @@ import okhttp3.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 
 @Slf4j
 public class BillingService {
@@ -33,27 +33,6 @@ public class BillingService {
                 .build();
 
         mapper = new ObjectMapper();
-    }
-
-    public BillingResponseDTO createAndValidateBilling(BillingRequestDTO billingRequest) {
-        try {
-            Request request = new Request.Builder()
-                    .url(String.format("%s/v1/bills/validate", API_URL))
-                    .post(RequestBody.create(mapper.writeValueAsString(billingRequest), JSON))
-                    .build();
-
-            try (Response response = this.httpClient.newCall(request).execute()) {
-                assert response.body() != null;
-                if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body().string());
-                return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillingResponseDTO>>() {
-                        })
-                        .data()
-                        .getFirst();
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
     }
 
     public BillsFilteredResponseDTO getAllBills() {
@@ -134,6 +113,23 @@ public class BillingService {
         }
     }
 
+    public BillEventsResponseDTO getBillEvents(String number) {
+        Request request = new Request.Builder()
+                .url(String.format("%s//v1/bills/%s/radian/events", API_URL, number))
+                .get()
+                .build();
+
+        try (Response response = this.httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
+
+            assert response.body() != null;
+            return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillEventsResponseDTO>>() {
+            }).data().getFirst();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void downloadBillXml(String number) {
         Request request = new Request.Builder()
                 .url(String.format("%s/v1/bills/download-xml/%s", API_URL, number))
@@ -167,6 +163,41 @@ public class BillingService {
             assert response.body() != null;
             return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
             }).data().getFirst();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public BillingResponseDTO createAndValidateBill(BillingRequestDTO billingRequest) {
+        try {
+            Request request = new Request.Builder()
+                    .url(String.format("%s/v1/bills/validate", API_URL))
+                    .post(RequestBody.create(mapper.writeValueAsString(billingRequest), JSON))
+                    .build();
+
+            try (Response response = this.httpClient.newCall(request).execute()) {
+                assert response.body() != null;
+                if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body().string());
+                return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillingResponseDTO>>() {
+                        })
+                        .data()
+                        .getFirst();
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteBill(String referenceCode) {
+        Request request = new Request.Builder()
+                .url(String.format("%s//v1/bills/destroy/reference/%s", API_URL, referenceCode))
+                .delete()
+                .build();
+
+        try (Response response = this.httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
+            log.info("Bill whit reference code {} delete successfully", referenceCode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
