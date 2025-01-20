@@ -15,8 +15,6 @@ public class InMemoryNumberingRangeContext implements DataContext<Integer, Numbe
     private InMemoryNumberingRangeContext() {
         numberingContext = new ConcurrentHashMap<>();
         numberingRangeService = new NumberingRangeService();
-
-        this.refreshContext();
     }
 
     public static InMemoryNumberingRangeContext getInstance() {

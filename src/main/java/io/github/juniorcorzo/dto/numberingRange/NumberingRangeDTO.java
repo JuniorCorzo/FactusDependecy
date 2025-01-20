@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.github.juniorcorzo.deserializes.NumberingRangeDeserializer;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @JsonDeserialize(using = NumberingRangeDeserializer.class)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -20,16 +19,16 @@ public record NumberingRangeDTO(
         long to,
         long current,
         String resolutionNumber,
-        LocalDate startDate,
-        LocalDate endDate,
+        String startDate,
+        String endDate,
         String months,
         String technicalKey,
         boolean isExpired,
         int isActive,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        String createdAt,
+        String updatedAt
 ) {
-    public NumberingRangeDTO(Integer id, String document, String prefix, long from, long to, long current, String resolutionNumber, LocalDate startDate, LocalDate endDate, String months, String technicalKey, boolean isExpired, int isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public NumberingRangeDTO(Integer id, String document, String prefix, long from, long to, long current, String resolutionNumber, String startDate, String endDate, String months, String technicalKey, boolean isExpired, int isActive, String createdAt, String updatedAt) {
         this.id = id;
         this.document = document;
         this.prefix = prefix;
@@ -47,11 +46,11 @@ public record NumberingRangeDTO(
         this.updatedAt = updatedAt;
     }
 
-    public NumberingRangeDTO(int isActive, boolean isExpired, String technicalKey, LocalDate endDate, LocalDate startDate, String resolutionNumber, long current, long to, long from, String prefix, String document, Integer id) {
+    public NumberingRangeDTO(int isActive, boolean isExpired, String technicalKey, String endDate, String startDate, String resolutionNumber, long current, long to, long from, String prefix, String document, Integer id) {
         this(id, document, prefix, from, to, current, resolutionNumber, startDate, endDate, "", technicalKey, isExpired, isActive, null, null);
     }
 
-    public NumberingRangeDTO(String prefix, long from, long to, String resolutionNumber, LocalDate startDate, LocalDate endDate, String months) {
+    public NumberingRangeDTO(String prefix, long from, long to, String resolutionNumber, String startDate, String endDate, String months) {
         this(0, "", prefix, from, to, 0, resolutionNumber, startDate, endDate, months, "", false, 0, null, null);
     }
 }

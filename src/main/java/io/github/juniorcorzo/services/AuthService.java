@@ -61,11 +61,10 @@ public class AuthService {
                 .build();
 
         try (Response response = this.httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response);
-
             assert response.body() != null;
+            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body().string());
+
             ResponseAuthDTO authData = this.mapper.readValue(response.body().string(), ResponseAuthDTO.class);
-            System.out.println(authData);
             this.authContext.setAuthContext(authData);
         } catch (IOException e) {
             log.error(e.getMessage());

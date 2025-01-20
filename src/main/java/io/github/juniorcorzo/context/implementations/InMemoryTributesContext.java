@@ -15,8 +15,6 @@ public class InMemoryTributesContext implements DataContext<Integer, TributesDTO
     private InMemoryTributesContext() {
         tributesContext = new ConcurrentHashMap<>();
         tributesService = new TributesService();
-
-        this.refreshContext();
     }
 
     public static InMemoryTributesContext getInstance() {

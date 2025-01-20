@@ -21,14 +21,14 @@ public class NumberingRangeDeserializer extends JsonDeserializer<NumberingRangeD
         long to = node.hasNonNull("to") ? node.get("to").asLong() : 0;
         long current = node.hasNonNull("current") ? node.get("current").asLong() : 0;
         String resolutionNumber = node.hasNonNull("resolution_number") ? node.get("resolution_number").asText() : null;
-        LocalDate startDate = node.hasNonNull("start_date") ? LocalDate.parse(node.get("start_date").asText()) : null;
-        LocalDate endDate = node.hasNonNull("end_date") ? LocalDate.parse(node.get("end_date").asText()) : null;
+        String startDate = node.hasNonNull("start_date") ? node.get("start_date").asText() : null;
+        String endDate = node.hasNonNull("end_date") ? node.get("end_date").asText() : null;
         String months = node.hasNonNull("months") ? node.get("months").asText() : null;
         String technicalKey = node.hasNonNull("technical_key") ? node.get("technical_key").asText() : null;
         boolean isExpired = node.hasNonNull("is_expired") && node.get("is_expired").asBoolean();
         int isActive = node.hasNonNull("is_active") ? node.get("is_active").asInt() : 0;
-        LocalDateTime createdAt = node.hasNonNull("created_at") ? LocalDateTime.parse(node.get("created_at").asText()) : null;
-        LocalDateTime updatedAt = node.hasNonNull("updated_at") ? LocalDateTime.parse(node.get("updated_at").asText()) : null;
+        String createdAt = node.hasNonNull("created_at") ? node.get("created_at").asText() : null;
+        String updatedAt = node.hasNonNull("updated_at") ? node.get("updated_at").asText() : null;
 
         return new NumberingRangeDTO(id, document, prefix, from, to, current, resolutionNumber, startDate, endDate, months, technicalKey, isExpired, isActive, createdAt, updatedAt);
     }

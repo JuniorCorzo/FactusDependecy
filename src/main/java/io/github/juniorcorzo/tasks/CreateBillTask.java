@@ -17,6 +17,6 @@ public class CreateBillTask implements Callable<BillingResponseDTO> {
 
     @Override
     public BillingResponseDTO call() throws Exception {
-        return billingService.createAndValidateBilling(request);
+        return billingService.createAndValidateBill(request);
     }
 }

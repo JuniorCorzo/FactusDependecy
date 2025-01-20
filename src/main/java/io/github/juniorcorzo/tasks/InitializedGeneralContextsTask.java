@@ -7,8 +7,8 @@ import io.github.juniorcorzo.context.implementations.InMemoryTributesContext;
 public class InitializedGeneralContextsTask implements Runnable {
     @Override
     public void run() {
-        InMemoryNumberingRangeContext.getInstance();
-        InMemoryTributesContext.getInstance();
-        InMemoryMunicipalityContext.getInstance();
+        InMemoryNumberingRangeContext.getInstance().refreshContext();
+        InMemoryTributesContext.getInstance().refreshContext();
+        InMemoryMunicipalityContext.getInstance().refreshContext();
     }
 }

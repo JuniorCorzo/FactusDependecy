@@ -1,5 +1,6 @@
 package io.github.juniorcorzo.services;
 
+import io.github.juniorcorzo.tasks.InitializedAuthContextTask;
 import io.github.juniorcorzo.tasks.InitializedGeneralContextsTask;
 
 import java.util.concurrent.*;
@@ -9,11 +10,12 @@ public class TasksManagerService {
 
     public TasksManagerService() throws ExecutionException, InterruptedException {
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        this.initializedContexts();
     }
 
-    public void initializedContexts() {
-        this.submitTaskNow(AuthService::new);
-        this.submitTaskNow(InitializedGeneralContextsTask::new);
+    private void initializedContexts() {
+        this.submitTaskNow(new InitializedAuthContextTask());
+        this.submitTaskNow(new InitializedGeneralContextsTask());
     }
 
     public <T> Future<T> submitTasks(Callable<T> task) {

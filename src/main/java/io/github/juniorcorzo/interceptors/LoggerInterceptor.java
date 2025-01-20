@@ -15,17 +15,11 @@ public class LoggerInterceptor implements Interceptor {
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
         Request request = chain.request();
-
         long t1 = System.nanoTime();
-        log.info("Sending request {} on {}\n{}", request.url(), chain.connection(), request.headers());
-
+        log.info("Sending request {}", request.url());
         Response response = chain.proceed(request);
-
         long t2 = System.nanoTime();
-        log.info("Received response for {} in {}\n{}",
-                response.request().url(), (t2 - t1) / 1e6d, response.headers());
-
+        log.info("Received response for {} in {}", response.request().url(), (t2 - t1) / 1e6d);
         return response;
-
     }
 }

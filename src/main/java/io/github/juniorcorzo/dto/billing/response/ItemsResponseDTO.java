@@ -17,7 +17,7 @@ public record ItemsResponseDTO(
         String taxableAmount,
         String taxAmount,
         String price,
-        byte isExclude,
+        byte isExcluded,
         MeasurementUnitsDTO unitMeasure,
         StandardCodeDTO standardCode,
         TributesDTO tribute,

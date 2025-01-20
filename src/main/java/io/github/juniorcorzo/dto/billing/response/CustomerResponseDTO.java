@@ -11,6 +11,7 @@ import java.io.Serializable;
 public record CustomerResponseDTO(
         String identification,
         String dv,
+        String graphicRepresentationName,
         String company,
         String tradeName,
         String names,

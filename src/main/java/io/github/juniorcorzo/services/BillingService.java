@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.juniorcorzo.dto.ResponseDTO;
+import io.github.juniorcorzo.dto.SingleDataResponseDTO;
 import io.github.juniorcorzo.dto.billing.request.BillFiltersRequestDTO;
 import io.github.juniorcorzo.dto.billing.request.BillingRequestDTO;
 import io.github.juniorcorzo.dto.billing.response.BillEventsResponseDTO;
@@ -50,8 +51,12 @@ public class BillingService {
             if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
 
             assert response.body() != null;
-            return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillsFilteredResponseDTO>>(){}).data().getFirst();
+            return this.mapper.readValue(
+                    response.body().string(),
+                    new TypeReference<ResponseDTO<BillsFilteredResponseDTO>>() {
+                    }).data().getFirst();
         } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -66,49 +71,11 @@ public class BillingService {
             if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
 
             assert response.body() != null;
-            return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillingResponseDTO>>() {
+            return this.mapper.readValue(response.body().string(), new TypeReference<SingleDataResponseDTO<BillingResponseDTO>>() {
                     })
-                    .data()
-                    .getFirst();
+                    .data();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void downloadBillPdf(String number) {
-        Request request = new Request.Builder()
-                .url(String.format("%s/v1/bills/download-pdf/%s", API_URL, number))
-                .get()
-                .build();
-
-        try (Response response = this.httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
-
-            assert response.body() != null;
-            BillFileDTO billFile = this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
-            }).data().getFirst();
-
-            try (FileOutputStream fos = new FileOutputStream(billFile.fileName().concat(".pdf"))) {
-                fos.write(Base64.getDecoder().decode(billFile.pdfBase64Encoded()));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public BillFileDTO getBillPdf(String number) {
-        Request request = new Request.Builder()
-                .url(String.format("%s/v1/bills/download-pdf/%s", API_URL, number))
-                .get()
-                .build();
-
-        try (Response response = this.httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
-
-            assert response.body() != null;
-            return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
-            }).data().getFirst();
-        } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -126,6 +93,49 @@ public class BillingService {
             return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillEventsResponseDTO>>() {
             }).data().getFirst();
         } catch (IOException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void downloadBillPdf(String number) {
+        Request request = new Request.Builder()
+                .url(String.format("%s/v1/bills/download-pdf/%s", API_URL, number))
+                .get()
+                .build();
+
+        try (Response response = this.httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
+
+            assert response.body() != null;
+            String bodyResponse = response.body().string();
+            System.out.println(bodyResponse);
+            BillFileDTO billFile = this.mapper.readValue(bodyResponse, new TypeReference<SingleDataResponseDTO<BillFileDTO>>() {
+            }).data();
+
+            try (FileOutputStream fos = new FileOutputStream("E:\\FactusDependency\\src\\main\\resources\\".concat(billFile.fileName()).concat(".pdf"))) {
+                fos.write(Base64.getDecoder().decode(billFile.pdfBase64Encoded()));
+            }
+        } catch (IOException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public BillFileDTO getBillPdf(String number) {
+        Request request = new Request.Builder()
+                .url(String.format("%s/v1/bills/download-pdf/%s", API_URL, number))
+                .get()
+                .build();
+
+        try (Response response = this.httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
+
+            assert response.body() != null;
+            return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
+            }).data().getFirst();
+        } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -143,10 +153,11 @@ public class BillingService {
             BillFileDTO billFile = this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
             }).data().getFirst();
 
-            try (FileOutputStream fos = new FileOutputStream(billFile.fileName().concat(".xml"))) {
+            try (FileOutputStream fos = new FileOutputStream("E:\\FactusDependency\\src\\main\\resources\\".concat(billFile.fileName()).concat(".pdf"))) {
                 fos.write(Base64.getDecoder().decode(billFile.xmlBase64Encoded()));
             }
         } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -164,6 +175,7 @@ public class BillingService {
             return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillFileDTO>>() {
             }).data().getFirst();
         } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -178,13 +190,14 @@ public class BillingService {
             try (Response response = this.httpClient.newCall(request).execute()) {
                 assert response.body() != null;
                 if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body().string());
-                return this.mapper.readValue(response.body().string(), new TypeReference<ResponseDTO<BillingResponseDTO>>() {
-                        })
-                        .data()
-                        .getFirst();
+                return this.mapper.readValue(response.body().string(),
+                                new TypeReference<SingleDataResponseDTO<BillingResponseDTO>>() {
+                                })
+                        .data();
             }
         } catch (IOException e) {
             log.error(e.getMessage());
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -199,6 +212,7 @@ public class BillingService {
             if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body());
             log.info("Bill whit reference code {} delete successfully", referenceCode);
         } catch (IOException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

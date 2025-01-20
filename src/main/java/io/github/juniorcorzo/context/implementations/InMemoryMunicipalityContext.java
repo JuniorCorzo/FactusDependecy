@@ -15,8 +15,6 @@ public class InMemoryMunicipalityContext implements DataContext<Integer, Municip
     private InMemoryMunicipalityContext() {
         this.municipalityContext = new ConcurrentHashMap<>();
         this.municipalityService = new MunicipalityService();
-
-        this.refreshContext();
     }
 
     public static InMemoryMunicipalityContext getInstance() {

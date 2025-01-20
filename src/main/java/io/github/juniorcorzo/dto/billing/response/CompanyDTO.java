@@ -10,6 +10,7 @@ public record CompanyDTO(
         String dv,
         String company,
         String name,
+        String graphicRepresentationName,
         String registrationCode,
         String economicActivity,
         String phone,

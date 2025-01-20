@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record BillingInfoDTO(
         int id,
+        DocumentResponseDTO document,
         String number,
         String referenceCode,
         byte status,
@@ -20,10 +21,13 @@ public record BillingInfoDTO(
         String taxAmount,
         String total,
         String observation,
-        String[] error,
-        String createAt,
+        String[] errors,
+        String createdAt,
         String paymentDueDate,
         String qrImage,
+        byte hasClaim,
+        byte isNegotiableInstrument,
+        PaymentResponseDTO paymentForm,
         PaymentResponseDTO paymentMethod
 ) {
 }

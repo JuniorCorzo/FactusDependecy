@@ -11,13 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-@Slf4j
 public class AuthInterceptor implements Interceptor {
 
     @NotNull
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
-        log.info("interceptor auth");
         ResponseAuthDTO authContext = InMemoryAuthContext.getInstance().getAuthContext();
 
         Request originalRequest = chain.request();
