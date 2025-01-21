@@ -46,7 +46,7 @@ public class AuthService {
     public void refreshToken() {
         MultipartBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("grant_type", GrantType.PASSWORD.name().toLowerCase())
+                .addFormDataPart("grant_type", GrantType.REFRESH_TOKEN.name().toLowerCase())
                 .addFormDataPart("client_id", this.loadEnv.get("CLIENT_ID"))
                 .addFormDataPart("client_secret", this.loadEnv.get("CLIENT_SECRET"))
                 .addFormDataPart("refresh_token", authContext.getAuthContext().refreshToken())
@@ -55,6 +55,11 @@ public class AuthService {
     }
 
     private void setAuthContext(MultipartBody requestBody) {
+        ResponseAuthDTO authData = this.sendRequest(requestBody);
+        this.authContext.setAuthContext(authData);
+    }
+
+    private ResponseAuthDTO sendRequest(MultipartBody requestBody) {
         Request request = new Request.Builder()
                 .url(String.format("%s/oauth/token", this.loadEnv.get("API_URL")))
                 .post(requestBody)
@@ -63,11 +68,11 @@ public class AuthService {
         try (Response response = this.httpClient.newCall(request).execute()) {
             assert response.body() != null;
             if (!response.isSuccessful()) throw new IOException("Unexpected code" + response.body().string());
-
-            ResponseAuthDTO authData = this.mapper.readValue(response.body().string(), ResponseAuthDTO.class);
-            this.authContext.setAuthContext(authData);
+            return this.mapper.readValue(response.body().string(), ResponseAuthDTO.class);
         } catch (IOException e) {
             log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
+
 }

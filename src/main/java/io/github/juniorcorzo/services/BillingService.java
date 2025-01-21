@@ -109,7 +109,6 @@ public class BillingService {
 
             assert response.body() != null;
             String bodyResponse = response.body().string();
-            System.out.println(bodyResponse);
             BillFileDTO billFile = this.mapper.readValue(bodyResponse, new TypeReference<SingleDataResponseDTO<BillFileDTO>>() {
             }).data();
 
