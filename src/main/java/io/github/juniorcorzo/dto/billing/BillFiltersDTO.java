@@ -1,6 +1,6 @@
-package io.github.juniorcorzo.dto.billing.request;
+package io.github.juniorcorzo.dto.billing;
 
-public record BillFiltersRequestDTO(
+public record BillFiltersDTO(
         String identification,
         String names,
         String number,

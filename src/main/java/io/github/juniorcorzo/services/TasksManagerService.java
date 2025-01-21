@@ -28,9 +28,6 @@ public class TasksManagerService {
         return this.scheduledExecutorService.schedule(task, delay, timeUnit);
     }
 
-    public <T> Future<T> submitTasks(Callable<T> task) {
-        return this.executorService.submit(task);
-    }
 
     public void submitTask(Runnable r) {
         this.executorService.submit(r);
@@ -56,9 +53,16 @@ public class TasksManagerService {
         }
     }
 
-    public void shutDown() {
+    public void shutdown() {
         this.executorService.shutdown();
+        this.scheduledExecutorService.shutdown();
     }
+
+    public void shutdownNow() {
+        this.executorService.shutdownNow();
+        this.scheduledExecutorService.shutdownNow();
+    }
+
 
     private void initializedContexts() {
         this.submitTaskNow(new InitializedAuthContextTask());

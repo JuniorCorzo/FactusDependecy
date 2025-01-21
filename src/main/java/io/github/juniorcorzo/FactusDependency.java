@@ -5,30 +5,31 @@ import io.github.juniorcorzo.dto.billing.request.CustomerRequestDTO;
 import io.github.juniorcorzo.dto.billing.request.ItemsRequestDTO;
 import io.github.juniorcorzo.dto.billing.request.WithholdingTaxesRequestDTO;
 import io.github.juniorcorzo.dto.billing.response.BillingResponseDTO;
-import io.github.juniorcorzo.enums.DocumentIdentification;
 import io.github.juniorcorzo.services.TasksManagerService;
 import io.github.juniorcorzo.tasks.CreateBillTask;
 import io.github.juniorcorzo.tasks.DownloadPDFTask;
-import io.github.juniorcorzo.tasks.ViewBillTask;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class FactusDependency {
     public static void main(String[] args) {
         BillingRequestDTO request = new BillingRequestDTO(
                 8,
-                "EZ9867EZ",
+                null,
+                "EZ9860EZ",
                 "",
                 "1",
                 LocalDate.now().toString(),
+                null,
+                null,
+                null,
                 new CustomerRequestDTO(
                         "1007196987",
-                        "",
-                        "",
-                        "",
+                        null,
+                        null,
+                        null,
                         "Angel Corzo",
                         "Calle 5 avenida 6",
                         "Josedanielmmf@gmail.com",
@@ -57,9 +58,10 @@ public class FactusDependency {
 
         try {
             TasksManagerService tasksManagerService = new TasksManagerService();
-//            System.out.println(tasksManagerService.obtainNow(new CreateBillTask(request)));
-            tasksManagerService.submitTaskNow(new DownloadPDFTask("SETP990008561"));
-            tasksManagerService.shutDown();
+            BillingResponseDTO response = tasksManagerService.submitTaskNow(new CreateBillTask(request));
+            System.out.println(response);
+            tasksManagerService.submitTaskNow(new DownloadPDFTask(response.bill().number()));
+            tasksManagerService.shutdownNow();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }

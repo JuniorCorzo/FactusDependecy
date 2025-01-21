@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.juniorcorzo.dto.ResponseDTO;
 import io.github.juniorcorzo.dto.SingleDataResponseDTO;
-import io.github.juniorcorzo.dto.billing.request.BillFiltersRequestDTO;
+import io.github.juniorcorzo.dto.billing.BillFiltersDTO;
 import io.github.juniorcorzo.dto.billing.request.BillingRequestDTO;
 import io.github.juniorcorzo.dto.billing.response.BillEventsResponseDTO;
 import io.github.juniorcorzo.dto.billing.response.BillFileDTO;
@@ -37,10 +37,10 @@ public class BillingService {
     }
 
     public BillsFilteredResponseDTO getAllBills() {
-        return this.filterBills(new BillFiltersRequestDTO("", "", "", "", "", ""));
+        return this.filterBills(new BillFiltersDTO("", "", "", "", "", ""));
     }
 
-    public BillsFilteredResponseDTO filterBills(BillFiltersRequestDTO filters) {
+    public BillsFilteredResponseDTO filterBills(BillFiltersDTO filters) {
         Request request = new Request.Builder()
                 .url(String.format("%s/v1/bills?filter[identification]=%s&filter[names]=%s&filter[number]=%s&filter[prefix]=%s&filter[reference_code]=%s&filter[status]=%s",
                         API_URL, filters.identification(), filters.names(), filters.number(), filters.prefix(), filters.referenceCode(), filters.status()))
